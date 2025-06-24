@@ -1,7 +1,10 @@
 package com.cd.Arcadius.Card;
 
+import java.util.Set;
+
 import com.cd.Arcadius.Card.Enum.CardRarityEnum;
 import com.cd.Arcadius.Card.Enum.CardTypeEnum;
+import com.cd.Arcadius.UserCard.UserCard;
 
 import jakarta.persistence.*;
 
@@ -24,6 +27,17 @@ public class Card {
 
     @Column(name = "c_rarity")
     private CardRarityEnum rarity;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    private Set<UserCard> userCards;
+
+    public Set<UserCard> getUserCards() {
+        return userCards;
+    }
+
+    public void setUserCards(Set<UserCard> userCards) {
+        this.userCards = userCards;
+    }
 
     public CardTypeEnum getType() {
         return type;

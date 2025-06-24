@@ -1,6 +1,9 @@
 package com.cd.Arcadius.User;
 
+import java.util.Set;
+
 import com.cd.Arcadius.Account.Account;
+import com.cd.Arcadius.UserCard.UserCard;
 
 import jakarta.persistence.*;
 
@@ -24,6 +27,12 @@ public class User {
     @Column(name = "total_xp", nullable = false)
     private Long totalXp;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<UserCard> userCards;
+
+    @OneToOne(mappedBy = "user")
+    private Account account;
+
     public User() {
     }
 
@@ -34,8 +43,13 @@ public class User {
         this.totalXp = totalXp;
     }
 
-    @OneToOne(mappedBy = "user")
-    private Account account;
+    public Set<UserCard> getUserCards() {
+        return userCards;
+    }
+
+    public void setUserCards(Set<UserCard> userCards) {
+        this.userCards = userCards;
+    }
 
     public Account getAccount() {
         return account;
