@@ -9,21 +9,24 @@ import com.cd.Arcadius.Card.Card;
 import com.cd.Arcadius.Card.CardRepository;
 import com.cd.Arcadius.User.User;
 import com.cd.Arcadius.User.UserRepository;
+import com.cd.Arcadius.UserCard.Dto.UserCardDto;
 
 @Service
 public class UserCardService {
     private UserRepository userRepository;
     private CardRepository cardRepository;
     private UserCardRepository userCardRepository;
+    private UserCardMapper userCardMapper;
 
     public UserCardService(UserRepository userRepository, CardRepository cardRepository,
-            UserCardRepository userCardRepository) {
+            UserCardRepository userCardRepository, UserCardMapper userCardMapper) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.userCardRepository = userCardRepository;
+        this.userCardMapper = userCardMapper;
     }
 
-    public void addCardToUser(Long userId, Long cardId) {
+    public UserCardDto addCardToUser(Long userId, Long cardId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
         Card card = cardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("Card not found"));
@@ -35,7 +38,7 @@ public class UserCardService {
         Optional<UserCard> userCard = getUserCardById(userCardKey);
 
         if (userCard.isPresent())
-            updateUserCardCount(userCard.get());
+            return userCardMapper.toDto(updateUserCardCount(userCard.get()));
         else {
             UserCard newUserCard = new UserCard();
             newUserCard.setId(userCardKey);
@@ -43,7 +46,7 @@ public class UserCardService {
             newUserCard.setUser(user);
             newUserCard.setCard(card);
 
-            userCardRepository.save(newUserCard);
+            return userCardMapper.toDto(userCardRepository.save(newUserCard));
         }
     }
 
@@ -51,8 +54,8 @@ public class UserCardService {
         return userCardRepository.findById(userCardKey);
     }
 
-    public List<UserCard> getCardsForUser(Long userId) {
-        return userCardRepository.findByUserId(userId);
+    public List<UserCardDto> getCardsByUserId(Long userId) {
+        return userCardRepository.findByUserId(userId).stream().map(userCardMapper::toDto).toList();
     }
 
     private UserCard updateUserCardCount(UserCard userCard) {

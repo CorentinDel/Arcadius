@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cd.Arcadius.User.Dto.UserCardAddDto;
 import com.cd.Arcadius.User.Dto.UserResponseDto;
 import com.cd.Arcadius.UserCard.UserCardService;
+import com.cd.Arcadius.UserCard.Dto.UserCardDto;
+
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +36,13 @@ public class UserController {
 
     @PutMapping("/cards")
     @ResponseStatus(code = HttpStatus.OK)
-    public void putMethodName(@RequestBody UserCardAddDto userCardKey) {
+    public void addCardToUser(@RequestBody UserCardAddDto userCardKey) {
         userCardService.addCardToUser(userCardKey.userId(), userCardKey.cardId());
     }
+
+    @GetMapping("{userId}/cards")
+    public List<UserCardDto> getUserCardsByUserId(@PathVariable Long userId) {
+        return userCardService.getCardsByUserId(userId);
+    }
+
 }
